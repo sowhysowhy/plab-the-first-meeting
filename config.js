@@ -2,7 +2,12 @@
 window.PLAB_CONFIG = {
   // 把真實照片放進專案的 assets 資料夾，再填入相對路徑與描述實際畫面的 alt。
   // 也可以使用公開的 HTTPS 圖片網址。每筆照片使用 { src: "圖片路徑", alt: "畫面描述" }。
-  eventPhotos: [],
+  eventPhotos: [
+    {
+      src: "assets/pipe-cleaner-flower-workshop.jpg",
+      alt: "毛根花手作活動合照，活動夥伴在擺滿彩色毛根花作品的展示板後方合影。",
+    },
+  ],
 
   // 可填 Facebook、YouTube、Vimeo、Google Drive 影片網址或 MP4／WebM 檔案路徑。
   projectVideoUrl: "https://www.facebook.com/share/v/19zJMH4GGX/",

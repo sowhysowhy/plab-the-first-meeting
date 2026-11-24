@@ -425,6 +425,14 @@ p { overflow-wrap: break-word; }
 .media-placeholder span { color: var(--muted); font-size: .92rem; }
 .photo-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 6px; }
 .photo-gallery img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; }
+.photo-gallery img:only-child {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: clamp(350px, 62svh, 520px);
+  margin-inline: auto;
+  aspect-ratio: auto;
+}
 .project-video { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
 .project-video-links { display: flex; justify-content: center; padding: 12px; }
 .case-steps, .event-details { margin: 0; }

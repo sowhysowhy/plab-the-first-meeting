@@ -313,6 +313,46 @@
     });
   }
 
+  function facebookVideoId(url) {
+    if (url.protocol !== "https:" || !["facebook.com", "www.facebook.com", "m.facebook.com"].includes(url.hostname)) return "";
+
+    const pathId = url.pathname.match(/^\/(?:reel|(?:[^/]+\/)?videos)\/(\d+)\/?$/)?.[1];
+    if (pathId) return pathId;
+
+    if (/^\/(?:watch(?:\/live)?|video\.php)\/?$/.test(url.pathname)) {
+      const queryId = url.searchParams.get("v");
+      if (/^\d+$/.test(queryId || "")) return queryId;
+    }
+
+    return "";
+  }
+
+  function isFacebookVideoLink(url) {
+    if (url.protocol !== "https:") return false;
+    if (url.hostname === "fb.watch") return /^\/[A-Za-z0-9_-]+\/?$/.test(url.pathname);
+    if (!["facebook.com", "www.facebook.com", "m.facebook.com"].includes(url.hostname)) return false;
+
+    return Boolean(facebookVideoId(url)) || /^\/share\/v\/[A-Za-z0-9_-]+\/?$/.test(url.pathname);
+  }
+
+  function facebookEmbedURL(url) {
+    const videoId = facebookVideoId(url);
+    if (!videoId) return null;
+
+    const source = new URL("https://www.facebook.com/watch/");
+    if (url.pathname.startsWith("/reel/")) {
+      source.pathname = `/reel/${videoId}/`;
+    } else {
+      source.searchParams.set("v", videoId);
+    }
+
+    const player = new URL("https://www.facebook.com/plugins/video.php");
+    player.searchParams.set("href", source.href);
+    player.searchParams.set("show_text", "false");
+    player.searchParams.set("locale", "zh_TW");
+    return player.href;
+  }
+
   function videoEmbedURL(url) {
     if (url.protocol !== "https:") return null;
 
@@ -349,7 +389,22 @@
       }
     }
 
-    return null;
+    return facebookEmbedURL(url);
+  }
+
+  function facebookVideoLinks(url) {
+    const links = document.createElement("div");
+    links.className = "project-video-links";
+
+    const link = document.createElement("a");
+    link.className = "button button-outline";
+    link.href = url.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "在 Facebook 觀看影片";
+    link.setAttribute("aria-label", "在 Facebook 觀看影片（另開分頁）");
+    links.append(link);
+    return links;
   }
 
   function showProjectVideo() {
@@ -359,7 +414,11 @@
     if (!placeholder || !setting) return;
 
     const url = localOrWebMedia(setting);
-    const embedURL = url && videoEmbedURL(url);
+    const facebookLink = url && isFacebookVideoLink(url) ? url : null;
+    // Facebook 分享短網址可供直接開啟，內嵌播放器則使用另外設定的公開影片網址。
+    const canonicalFacebookURL = facebookLink && parseURL(config.projectVideoEmbedUrl);
+    const embedURL = (canonicalFacebookURL && facebookEmbedURL(canonicalFacebookURL)) ||
+      (url && videoEmbedURL(url));
     const title = "捷運臺北車站感官友善計畫紀錄影片";
 
     if (embedURL) {
@@ -372,6 +431,12 @@
       player.referrerPolicy = "strict-origin-when-cross-origin";
       player.src = embedURL;
       placeholder.replaceWith(player);
+      if (facebookLink) frame.append(facebookVideoLinks(facebookLink));
+      return;
+    }
+
+    if (facebookLink) {
+      placeholder.replaceWith(facebookVideoLinks(facebookLink));
       return;
     }
 
@@ -418,11 +483,9 @@
   }
 
   function setChristmasDetails() {
-    for (const field of ["theme", "lead", "tasks"]) {
-      const target = document.querySelector(`[data-christmas-${field}]`);
-      const value = cleanText(config.christmas?.[field]);
-      if (target && value) target.textContent = value;
-    }
+    const target = document.querySelector("[data-christmas-lead]");
+    const value = cleanText(config.christmas?.lead);
+    if (target && value) target.textContent = value;
   }
 
   showEventPhotos();

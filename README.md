@@ -23,9 +23,10 @@ python3 -m http.server 8000
 | 欄位 | 如何設定 |
 | --- | --- |
 | `eventPhotos` | 將毛根花手作活動的實際照片放入 `assets/`，為每張照片新增包含 `src`（相對路徑或 HTTPS 圖片網址）及 `alt`（畫面描述）的項目。 |
-| `projectVideoUrl` | 填入「捷運臺北車站感官友善計畫」90 秒紀錄影片的公開網址。支援 YouTube、Vimeo、Google Drive 預覽及可直接播放的 MP4／WebM。嵌入影片需開放觀看與嵌入權限。 |
+| `projectVideoUrl` | 填入「捷運臺北車站感官友善計畫」90 秒紀錄影片的公開網址。支援 Facebook、YouTube、Vimeo、Google Drive 預覽及可直接播放的 MP4／WebM。嵌入影片需開放觀看與嵌入權限。 |
+| `projectVideoEmbedUrl` | 使用 Facebook 分享短網址時，可在此填同一支影片的公開正式網址供嵌入。網站同時提供原分享網址的觀看入口。 |
 | `participationFormUrl` | 貼上提供給填答者的 Google 表單連結，支援 `forms.gle` 分享連結與 `docs.google.com/forms/…/viewform`。 |
-| `christmas.theme`、`christmas.lead`、`christmas.tasks` | 確認後填入聖誕節活動的實際主題、負責人及可參與工作。 |
+| `christmas.lead` | 聖誕節活動的負責人。 |
 
 毛根花手作案例以討論題呈現。若要補入當時的活動構想、宣傳、成本、籌備或執行細節，可編輯 `index.html` 中的案例卡。
 
